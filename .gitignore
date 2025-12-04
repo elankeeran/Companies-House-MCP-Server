@@ -26,3 +26,5 @@ Thumbs.db
 
 # MCP
 routes_output*.txt
+.mcpregistry_github_token
+.mcpregistry_registry_token
