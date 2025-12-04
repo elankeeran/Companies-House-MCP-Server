@@ -1,0 +1,204 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-10-17/server.schema.json",
+  "name": "io.github.elankeeran/companies-house-mcp",
+  "title": "UK Companies House",
+  "description": "Search UK companies, retrieve profiles, officers, charges, and generate due diligence reports",
+  "version": "1.0.0",
+  "author": "Elan Keeran",
+  "license": "MIT",
+  "websiteUrl": "https://github.com/elankeeran/Companies-House-MCP-Server",
+  "remotes": [
+    {
+      "type": "sse",
+      "url": "https://companies-house-mcp-server.onrender.com"
+    }
+  ],
+  "tools": [
+    {
+      "name": "search_companies",
+      "description": "Search for companies by name, number, or address in the UK Companies House registry",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "q": {
+            "type": "string",
+            "description": "The search query (company name, number, or address)"
+          },
+          "items_per_page": {
+            "type": "integer",
+            "description": "Number of results to return (default 5)",
+            "default": 5
+          },
+          "start_index": {
+            "type": "integer",
+            "description": "The index of the first result to return for pagination",
+            "default": 0
+          },
+          "api_key": {
+            "type": "string",
+            "description": "Optional Companies House API key (uses environment variable if not provided)"
+          }
+        },
+        "required": ["q"]
+      }
+    },
+    {
+      "name": "get_company_profile",
+      "description": "Get the basic profile of a company including status, address, type, and incorporation date",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "company_number": {
+            "type": "string",
+            "description": "The 8-digit company registration number"
+          },
+          "api_key": {
+            "type": "string",
+            "description": "Optional Companies House API key"
+          }
+        },
+        "required": ["company_number"]
+      }
+    },
+    {
+      "name": "get_company_officers",
+      "description": "Get the list of officers (directors and secretaries) for a company",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "company_number": {
+            "type": "string",
+            "description": "The 8-digit company registration number"
+          },
+          "items_per_page": {
+            "type": "integer",
+            "description": "Number of officers to return (default 20)",
+            "default": 20
+          },
+          "api_key": {
+            "type": "string",
+            "description": "Optional Companies House API key"
+          }
+        },
+        "required": ["company_number"]
+      }
+    },
+    {
+      "name": "get_filing_history",
+      "description": "Get the filing history of a company including accounts, returns, and confirmation statements",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "company_number": {
+            "type": "string",
+            "description": "The 8-digit company registration number"
+          },
+          "category": {
+            "type": "string",
+            "description": "Optional filter category (e.g., 'accounts', 'annual-return', 'confirmation-statement', 'officers')"
+          },
+          "items_per_page": {
+            "type": "integer",
+            "description": "Number of items to return (default 20)",
+            "default": 20
+          },
+          "api_key": {
+            "type": "string",
+            "description": "Optional Companies House API key"
+          }
+        },
+        "required": ["company_number"]
+      }
+    },
+    {
+      "name": "get_company_charges",
+      "description": "Get details of charges (mortgages) registered against the company",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "company_number": {
+            "type": "string",
+            "description": "The 8-digit company registration number"
+          },
+          "api_key": {
+            "type": "string",
+            "description": "Optional Companies House API key"
+          }
+        },
+        "required": ["company_number"]
+      }
+    },
+    {
+      "name": "get_company_insolvency",
+      "description": "Get insolvency proceedings information for a company",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "company_number": {
+            "type": "string",
+            "description": "The 8-digit company registration number"
+          },
+          "api_key": {
+            "type": "string",
+            "description": "Optional Companies House API key"
+          }
+        },
+        "required": ["company_number"]
+      }
+    },
+    {
+      "name": "get_persons_with_significant_control",
+      "description": "Get the Persons with Significant Control (PSC) of a company - beneficial owners with ownership percentages",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "company_number": {
+            "type": "string",
+            "description": "The 8-digit company registration number"
+          },
+          "api_key": {
+            "type": "string",
+            "description": "Optional Companies House API key"
+          }
+        },
+        "required": ["company_number"]
+      }
+    },
+    {
+      "name": "get_registered_office_address",
+      "description": "Get the current registered office address of a company",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "company_number": {
+            "type": "string",
+            "description": "The 8-digit company registration number"
+          },
+          "api_key": {
+            "type": "string",
+            "description": "Optional Companies House API key"
+          }
+        },
+        "required": ["company_number"]
+      }
+    },
+    {
+      "name": "generate_company_report",
+      "description": "Generate a comprehensive due diligence report for a company including profile, officers, beneficial owners, and active charges",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "company_number": {
+            "type": "string",
+            "description": "The 8-digit company registration number"
+          },
+          "api_key": {
+            "type": "string",
+            "description": "Optional Companies House API key"
+          }
+        },
+        "required": ["company_number"]
+      }
+    }
+  ]
+}
