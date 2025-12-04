@@ -1,0 +1,214 @@
+{
+    "info": {
+        "_postman_id": "b6a8c2a1-7b9d-4e1f-8c3a-1b2c3d4e5f6a",
+        "name": "Companies House MCP (HTTP)",
+        "description": "Collection to test the Companies House MCP Server via HTTP transport.\n\nNOTE: You must provide your own API Key in the `apiKey` variable.",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "1. List Tools",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json, text/event-stream",
+                        "type": "text"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"jsonrpc\": \"2.0\",\n  \"id\": 1,\n  \"method\": \"tools/list\",\n  \"params\": {}\n}"
+                },
+                "url": {
+                    "raw": "{{mcpBaseUrl}}/mcp",
+                    "host": [
+                        "{{mcpBaseUrl}}"
+                    ],
+                    "path": [
+                        "mcp"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "2. Search Companies",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json, text/event-stream",
+                        "type": "text"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"jsonrpc\": \"2.0\",\n  \"id\": 2,\n  \"method\": \"tools/call\",\n  \"params\": {\n    \"name\": \"search_companies\",\n    \"arguments\": {\n      \"q\": \"Barclays\",\n      \"api_key\": \"{{apiKey}}\"\n    }\n  }\n}"
+                },
+                "url": {
+                    "raw": "{{mcpBaseUrl}}/mcp",
+                    "host": [
+                        "{{mcpBaseUrl}}"
+                    ],
+                    "path": [
+                        "mcp"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "3. Get Company Profile",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json, text/event-stream",
+                        "type": "text"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"jsonrpc\": \"2.0\",\n  \"id\": 3,\n  \"method\": \"tools/call\",\n  \"params\": {\n    \"name\": \"get_company_profile\",\n    \"arguments\": {\n      \"company_number\": \"00000006\",\n      \"api_key\": \"{{apiKey}}\"\n    }\n  }\n}"
+                },
+                "url": {
+                    "raw": "{{mcpBaseUrl}}/mcp",
+                    "host": [
+                        "{{mcpBaseUrl}}"
+                    ],
+                    "path": [
+                        "mcp"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "4. Get Company Officers",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json, text/event-stream",
+                        "type": "text"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"jsonrpc\": \"2.0\",\n  \"id\": 4,\n  \"method\": \"tools/call\",\n  \"params\": {\n    \"name\": \"get_company_officers\",\n    \"arguments\": {\n      \"company_number\": \"00000006\",\n      \"api_key\": \"{{apiKey}}\"\n    }\n  }\n}"
+                },
+                "url": {
+                    "raw": "{{mcpBaseUrl}}/mcp",
+                    "host": [
+                        "{{mcpBaseUrl}}"
+                    ],
+                    "path": [
+                        "mcp"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "5. Get Filing History",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json, text/event-stream",
+                        "type": "text"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"jsonrpc\": \"2.0\",\n  \"id\": 5,\n  \"method\": \"tools/call\",\n  \"params\": {\n    \"name\": \"get_filing_history\",\n    \"arguments\": {\n      \"company_number\": \"00000006\",\n      \"category\": \"accounts\",\n      \"api_key\": \"{{apiKey}}\"\n    }\n  }\n}"
+                },
+                "url": {
+                    "raw": "{{mcpBaseUrl}}/mcp",
+                    "host": [
+                        "{{mcpBaseUrl}}"
+                    ],
+                    "path": [
+                        "mcp"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "6. Generate Company Report",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json, text/event-stream",
+                        "type": "text"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"jsonrpc\": \"2.0\",\n  \"id\": 6,\n  \"method\": \"tools/call\",\n  \"params\": {\n    \"name\": \"generate_company_report\",\n    \"arguments\": {\n      \"company_number\": \"00000006\",\n      \"api_key\": \"{{apiKey}}\"\n    }\n  }\n}"
+                },
+                "url": {
+                    "raw": "{{mcpBaseUrl}}/mcp",
+                    "host": [
+                        "{{mcpBaseUrl}}"
+                    ],
+                    "path": [
+                        "mcp"
+                    ]
+                }
+            },
+            "response": []
+        }
+    ],
+    "variable": [
+        {
+            "key": "mcpBaseUrl",
+            "value": "http://127.0.0.1:30001",
+            "type": "string"
+        },
+        {
+            "key": "apiKey",
+            "value": "YOUR_API_KEY_HERE",
+            "type": "string"
+        }
+    ]
+}
