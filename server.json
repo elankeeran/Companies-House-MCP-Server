@@ -14,7 +14,7 @@
   "remotes": [
     {
       "type": "http",
-      "url": "http://localhost:8001"
+      "url": "https://companies-house-mcp-server.onrender.com"
     }
   ],
   "tools": [
