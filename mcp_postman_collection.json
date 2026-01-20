@@ -346,7 +346,7 @@
     "variable": [
         {
             "key": "mcpBaseUrl",
-            "value": "http://127.0.0.1:8001",
+            "value": "http://localhost:8001",
             "type": "string"
         },
         {
