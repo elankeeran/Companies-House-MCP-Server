@@ -1,42 +1,46 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-10-17/server.schema.json",
-  "name": "io.github.elankeeran/companies-house-mcp",
-  "title": "UK Companies House",
-  "description": "Search UK companies, retrieve profiles, officers, charges, and generate due diligence reports",
-  "version": "1.0.0",
+  "name": "companies-house-mcp",
+  "displayName": "Companies House MCP Server",
+  "title": "UK Companies House Know Your Business (KYB) Tools",
+  "description": "Complete Know Your Business (KYB) toolkit for UK Companies House. Search companies, retrieve profiles, officers, beneficial owners, charges, insolvency data, and generate comprehensive due diligence reports.",
+  "version": "2.0.0",
   "author": "Elan Keeran",
   "license": "MIT",
-  "websiteUrl": "https://github.com/elankeeran/Companies-House-MCP-Server",
+  "homepage": "https://github.com/elankeeran/Companies-House-MCP-Server",
+  "repository": "https://github.com/elankeeran/Companies-House-MCP-Server",
+  "keywords": ["companies-house", "kyb", "due-diligence", "uk-business", "compliance", "beneficial-owners", "officers"],
+  "tags": ["companies", "business", "uk", "kyb", "compliance"],
   "remotes": [
     {
-      "type": "sse",
-      "url": "https://companies-house-mcp-server.onrender.com"
+      "type": "http",
+      "url": "http://localhost:8001"
     }
   ],
   "tools": [
     {
-      "name": "search_companies",
-      "description": "Search for companies by name, number, or address in the UK Companies House registry",
+      "name": "search_companies_advanced",
+      "description": "Advanced search for companies by name, number, or address with filters. Resolves name ambiguity and reduces wrong-company selection.",
       "inputSchema": {
         "type": "object",
         "properties": {
           "q": {
             "type": "string",
-            "description": "The search query (company name, number, or address)"
+            "description": "Search query: company name, company number, or address"
           },
           "items_per_page": {
             "type": "integer",
-            "description": "Number of results to return (default 5)",
+            "description": "Number of results to return",
             "default": 5
           },
           "start_index": {
             "type": "integer",
-            "description": "The index of the first result to return for pagination",
+            "description": "Index for pagination",
             "default": 0
           },
           "api_key": {
             "type": "string",
-            "description": "Optional Companies House API key (uses environment variable if not provided)"
+            "description": "Optional Companies House API key (uses COMPANIES_HOUSE_API_KEY env var if not provided)"
           }
         },
         "required": ["q"]
@@ -44,13 +48,13 @@
     },
     {
       "name": "get_company_profile",
-      "description": "Get the basic profile of a company including status, address, type, and incorporation date",
+      "description": "Get complete company profile including status, address, type, incorporation date, and company details",
       "inputSchema": {
         "type": "object",
         "properties": {
           "company_number": {
             "type": "string",
-            "description": "The 8-digit company registration number"
+            "description": "8-digit company registration number"
           },
           "api_key": {
             "type": "string",
@@ -62,17 +66,17 @@
     },
     {
       "name": "get_company_officers",
-      "description": "Get the list of officers (directors and secretaries) for a company",
+      "description": "Get list of officers (directors and secretaries) for a company with appointment details",
       "inputSchema": {
         "type": "object",
         "properties": {
           "company_number": {
             "type": "string",
-            "description": "The 8-digit company registration number"
+            "description": "8-digit company registration number"
           },
           "items_per_page": {
             "type": "integer",
-            "description": "Number of officers to return (default 20)",
+            "description": "Number of officers to return",
             "default": 20
           },
           "api_key": {
@@ -84,41 +88,28 @@
       }
     },
     {
-      "name": "get_filing_history",
-      "description": "Get the filing history of a company including accounts, returns, and confirmation statements",
+      "name": "get_filing_history_list",
+      "description": "Get list of all filings for a company (accounts, returns, confirmation statements, etc.). Foundation for document discovery and deep research.",
       "inputSchema": {
         "type": "object",
         "properties": {
           "company_number": {
             "type": "string",
-            "description": "The 8-digit company registration number"
+            "description": "8-digit company registration number"
           },
           "category": {
             "type": "string",
-            "description": "Optional filter category (e.g., 'accounts', 'annual-return', 'confirmation-statement', 'officers')"
+            "description": "Optional filter: 'accounts', 'annual-return', 'confirmation-statement', 'officers'"
           },
           "items_per_page": {
             "type": "integer",
-            "description": "Number of items to return (default 20)",
+            "description": "Number of filings to return",
             "default": 20
           },
-          "api_key": {
-            "type": "string",
-            "description": "Optional Companies House API key"
-          }
-        },
-        "required": ["company_number"]
-      }
-    },
-    {
-      "name": "get_company_charges",
-      "description": "Get details of charges (mortgages) registered against the company",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "company_number": {
-            "type": "string",
-            "description": "The 8-digit company registration number"
+          "start_index": {
+            "type": "integer",
+            "description": "Index for pagination",
+            "default": 0
           },
           "api_key": {
             "type": "string",
@@ -129,14 +120,86 @@
       }
     },
     {
-      "name": "get_company_insolvency",
-      "description": "Get insolvency proceedings information for a company",
+      "name": "get_filing_history_item",
+      "description": "Get specific filing details by transaction ID. Links filings to document metadata needed for PDF downloads.",
       "inputSchema": {
         "type": "object",
         "properties": {
           "company_number": {
             "type": "string",
-            "description": "The 8-digit company registration number"
+            "description": "8-digit company registration number"
+          },
+          "transaction_id": {
+            "type": "string",
+            "description": "Transaction ID of the filing (from filing history list)"
+          },
+          "api_key": {
+            "type": "string",
+            "description": "Optional Companies House API key"
+          }
+        },
+        "required": ["company_number", "transaction_id"]
+      }
+    },
+    {
+      "name": "download_document",
+      "description": "Download document content by document ID. Returns base64-encoded PDF with metadata. Handles auth and rate limiting.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "document_id": {
+            "type": "string",
+            "description": "Unique document identifier"
+          },
+          "api_key": {
+            "type": "string",
+            "description": "Optional Companies House API key"
+          }
+        },
+        "required": ["document_id"]
+      }
+    },
+    {
+      "name": "download_filing_document",
+      "description": "Download filing document via filing details lookup. Wrapper that retrieves document_id and downloads in one call.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "company_number": {
+            "type": "string",
+            "description": "8-digit company registration number"
+          },
+          "transaction_id": {
+            "type": "string",
+            "description": "Transaction ID of the filing"
+          },
+          "api_key": {
+            "type": "string",
+            "description": "Optional Companies House API key"
+          }
+        },
+        "required": ["company_number", "transaction_id"]
+      }
+    },
+    {
+      "name": "get_psc_list",
+      "description": "Get list of Persons with Significant Control (beneficial owners). Core for ownership/UBO discovery. Required for bank KYB.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "company_number": {
+            "type": "string",
+            "description": "8-digit company registration number"
+          },
+          "items_per_page": {
+            "type": "integer",
+            "description": "Number of PSCs to return",
+            "default": 20
+          },
+          "start_index": {
+            "type": "integer",
+            "description": "Index for pagination",
+            "default": 0
           },
           "api_key": {
             "type": "string",
@@ -147,14 +210,92 @@
       }
     },
     {
-      "name": "get_persons_with_significant_control",
-      "description": "Get the Persons with Significant Control (PSC) of a company - beneficial owners with ownership percentages",
+      "name": "get_psc",
+      "description": "Get details of a specific Persons with Significant Control by ID. Returns ownership percentage and control details.",
       "inputSchema": {
         "type": "object",
         "properties": {
           "company_number": {
             "type": "string",
-            "description": "The 8-digit company registration number"
+            "description": "8-digit company registration number"
+          },
+          "psc_id": {
+            "type": "string",
+            "description": "PSC ID in format: 'individual/12345' or 'corporate/54321'"
+          },
+          "api_key": {
+            "type": "string",
+            "description": "Optional Companies House API key"
+          }
+        },
+        "required": ["company_number", "psc_id"]
+      }
+    },
+    {
+      "name": "get_psc_statements",
+      "description": "Get PSC statements for company (e.g., 'no PSCs found', 'PSC unknown', 'PSC ceased'). Important for ownership verification.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "company_number": {
+            "type": "string",
+            "description": "8-digit company registration number"
+          },
+          "items_per_page": {
+            "type": "integer",
+            "description": "Number of statements to return",
+            "default": 20
+          },
+          "start_index": {
+            "type": "integer",
+            "description": "Index for pagination",
+            "default": 0
+          },
+          "api_key": {
+            "type": "string",
+            "description": "Optional Companies House API key"
+          }
+        },
+        "required": ["company_number"]
+      }
+    },
+    {
+      "name": "get_charges_list",
+      "description": "Get list of charges/mortgages against company. Shows secured lending exposure. Important for risk and lending decisions.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "company_number": {
+            "type": "string",
+            "description": "8-digit company registration number"
+          },
+          "items_per_page": {
+            "type": "integer",
+            "description": "Number of charges to return",
+            "default": 20
+          },
+          "start_index": {
+            "type": "integer",
+            "description": "Index for pagination",
+            "default": 0
+          },
+          "api_key": {
+            "type": "string",
+            "description": "Optional Companies House API key"
+          }
+        },
+        "required": ["company_number"]
+      }
+    },
+    {
+      "name": "get_insolvency",
+      "description": "Get insolvency proceedings information. IMMEDIATE HARD RISK SIGNAL. Mandatory KYB check for any credit/lending decision.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "company_number": {
+            "type": "string",
+            "description": "8-digit company registration number"
           },
           "api_key": {
             "type": "string",
@@ -166,13 +307,13 @@
     },
     {
       "name": "get_registered_office_address",
-      "description": "Get the current registered office address of a company",
+      "description": "Get current registered office address of company. Direct access cleaner than parsing full profile.",
       "inputSchema": {
         "type": "object",
         "properties": {
           "company_number": {
             "type": "string",
-            "description": "The 8-digit company registration number"
+            "description": "8-digit company registration number"
           },
           "api_key": {
             "type": "string",
@@ -183,14 +324,78 @@
       }
     },
     {
+      "name": "get_officer_appointments",
+      "description": "Get all company appointments for an officer. Detect serial directors and map director networks for enhanced KYB risk assessment.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "officer_id": {
+            "type": "string",
+            "description": "Unique officer ID"
+          },
+          "items_per_page": {
+            "type": "integer",
+            "description": "Number of appointments to return",
+            "default": 20
+          },
+          "start_index": {
+            "type": "integer",
+            "description": "Index for pagination",
+            "default": 0
+          },
+          "api_key": {
+            "type": "string",
+            "description": "Optional Companies House API key"
+          }
+        },
+        "required": ["officer_id"]
+      }
+    },
+    {
+      "name": "get_disqualification_natural",
+      "description": "Check if natural person (individual) is disqualified from directing. MANDATORY RED-FLAG CHECK for KYB.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "officer_id": {
+            "type": "string",
+            "description": "Unique officer ID for natural person"
+          },
+          "api_key": {
+            "type": "string",
+            "description": "Optional Companies House API key"
+          }
+        },
+        "required": ["officer_id"]
+      }
+    },
+    {
+      "name": "get_disqualification_corporate",
+      "description": "Check if corporate entity is disqualified from directing. MANDATORY RED-FLAG CHECK for corporate entities.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "officer_id": {
+            "type": "string",
+            "description": "Unique officer ID for corporate entity"
+          },
+          "api_key": {
+            "type": "string",
+            "description": "Optional Companies House API key"
+          }
+        },
+        "required": ["officer_id"]
+      }
+    },
+    {
       "name": "generate_company_report",
-      "description": "Generate a comprehensive due diligence report for a company including profile, officers, beneficial owners, and active charges",
+      "description": "Generate comprehensive KYB due diligence report. Aggregates profile, officers, beneficial owners, charges, and insolvency into single summary.",
       "inputSchema": {
         "type": "object",
         "properties": {
           "company_number": {
             "type": "string",
-            "description": "The 8-digit company registration number"
+            "description": "8-digit company registration number"
           },
           "api_key": {
             "type": "string",
