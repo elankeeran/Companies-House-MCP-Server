@@ -217,27 +217,44 @@ def download_document(document_id: str, api_key: str | None = None) -> Dict | st
     Download document content by document ID.
     
     Fetches accounts, confirmation statements, PSC filings, etc.
-    Auth, redirects, and rate-limiting are handled by MCP.
+    Uses the document-api service for file downloads.
     
     Args:
         document_id: The unique document ID.
         api_key: Optional API Key.
     """
+    # Document API uses a different base URL
+    document_api_url = "https://document-api.company-information.service.gov.uk"
     endpoint = f"/document/{document_id}/content"
+    
     try:
-        with _get_client(api_key) as client:
-            response = client.get(endpoint)
-            if response.status_code == 200:
-                # Return document metadata and content
-                return {
-                    "status": "success",
-                    "document_id": document_id,
-                    "content_type": response.headers.get("content-type", "application/octet-stream"),
-                    "content_length": len(response.content),
-                    "content_base64": __import__("base64").b64encode(response.content).decode("utf-8")
-                }
-            else:
-                return _handle_response(response)
+        token = api_key or COMPANIES_HOUSE_API_KEY
+        if not token:
+            raise ValueError("No Companies House API key provided.")
+        
+        # Use document API endpoint directly
+        response = httpx.get(
+            f"{document_api_url}{endpoint}",
+            auth=(token, ""),
+            timeout=10.0,
+            follow_redirects=True
+        )
+        
+        if response.status_code == 200:
+            # Return document metadata and content
+            return {
+                "status": "success",
+                "document_id": document_id,
+                "content_type": response.headers.get("content-type", "application/octet-stream"),
+                "content_length": len(response.content),
+                "content_base64": __import__("base64").b64encode(response.content).decode("utf-8")
+            }
+        elif response.status_code == 404:
+            return {"error": "NOT_FOUND", "message": "Document not found. Ensure the document_id is correct and the document has not expired."}
+        elif response.status_code == 401:
+            return {"error": "UNAUTHORISED", "message": "Invalid API Key."}
+        else:
+            return {"error": "HTTP_ERROR", "message": f"Status {response.status_code}: {response.text[:200]}"}
     except ValueError as e:
         return {"error": "CONFIGURATION_ERROR", "message": str(e)}
     except Exception as e:
